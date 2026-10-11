@@ -1,3 +1,6 @@
+import time
+
+
 def hamle_sayaci():
     """Her cagirildiginda degeri 1 artan bir sayac fonksiyonu dondurur (Closure)."""
     sayac = 0
@@ -25,3 +28,33 @@ def en_bagli_gezegenler(galaksi):
         baglantilar.keys(),
         key=lambda gezegen: (-len(baglantilar[gezegen]), gezegen),
     )
+
+
+def sure_olc(fonksiyon):
+    """
+    Verilen fonksiyonu *args ve **kwargs ile cagiran,
+    calisma suresini ekrana basan sarmalayici fonksiyon.
+    """
+    def sarmalayici(*args, **kwargs):
+        baslangic = time.perf_counter()
+        sonuc = fonksiyon(*args, **kwargs)
+        bitis = time.perf_counter()
+        gecen_sure = bitis - baslangic
+        print(f"{fonksiyon.__name__} çalışma süresi: {gecen_sure:.6f} saniye")
+        return sonuc
+
+    return sarmalayici
+
+
+if __name__ == "__main__":
+    # Föydeki deneme adımı
+    ornek_galaksi = {
+        "dünya": ["ay", "mars"],
+        "sirius": ["orion", "vega", "centauri"],
+        "kara_delik": [],
+    }
+
+    # Fonksiyon sure_olc ile sarmalaniyor
+    en_bagli_gezegenler = sure_olc(en_bagli_gezegenler)
+    sirali = en_bagli_gezegenler(ornek_galaksi)
+    print("Sıralı liste:", sirali)
