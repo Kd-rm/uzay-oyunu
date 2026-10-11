@@ -1,4 +1,6 @@
-from uzay_oyunu.oyun import envanter_metni , hedef_menusu , gorev_kaydi
+from uzay_oyunu.oyun import envanter_metni , hedef_menusu , galaksi_kur
+from uzay_oyunu.kayit import gorev_kaydi
+import pytest 
 
 def test_envanter_metni_dolu():
     sonuc = envanter_metni(True,False,True)
@@ -26,3 +28,23 @@ def test_gorev_kaydi():
         "  sorumlu: Ayşe"
     )
     assert sonuc == beklenen
+
+def test_galaksi_kur():
+    veri = {
+        "gezegenler": ["dünya", "mars"],
+        "baglantilar": {"dünya": ["mars"], "mars": []},
+        "baslangic": "dünya",
+        "yakit": 100,
+    }
+    g = galaksi_kur(**veri)
+    assert g["konum"] == "dünya"
+    assert g["yakit"] == 100
+
+def test_galaksi_kur_varsayilan_yakit():
+    g = galaksi_kur(["mars"], {"mars": []}, "mars")
+    assert g["yakit"] == 50
+
+def test_galaksi_kur_hatali_baslangic():
+    with pytest.raises(ValueError):
+        galaksi_kur(["mars"], {"mars": []}, "dünya")
+
