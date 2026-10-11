@@ -1,5 +1,13 @@
 import json
 
+try:
+    from uzay_oyunu.araclar import hamle_sayaci
+except ImportError:
+    from araclar import hamle_sayaci
+
+# Oyun genelinde kullanilacak varsayilan sayac
+varsayilan_sayac = hamle_sayaci()
+
 
 def envanter_metni(credits: bool, engines: bool, copilot: bool) -> str:
     """Mevcut esyalarin durumuna gore envanter metnini dondurur."""
@@ -44,16 +52,31 @@ def galaksi_kur(
 
 
 def travel(
-    galaksi: dict, planet: str, credits: bool, engines: bool, copilot: bool
+    galaksi: dict,
+    planet: str,
+    credits: bool,
+    engines: bool,
+    copilot: bool,
+    sayac=None,
+    oyun_bitti: bool = False,
 ) -> None:
     """Oyuncunun envanterini ve secilen gezegenden gidilebilecek hedefleri ekrana basar."""
+    # Her yolculukta sayaci cagiriyoruz
+    guncel_sayac = sayac if sayac is not None else varsayilan_sayac
+    hamle = guncel_sayac()
+
     envanter = envanter_metni(credits, engines, copilot)
     if envanter:
         print(envanter)
 
     # Hedefleri harita sozlügünden cekiyoruz
-    hedefler = galaksi["baglantilar"][planet]
-    print(hedef_menusu(hedefler))
+    hedefler = galaksi.get("baglantilar", {}).get(planet, [])
+    if hedefler:
+        print(hedef_menusu(hedefler))
+
+    # Oyun bittiyse toplam hamle sayisini ekrana basar
+    if oyun_bitti or planet == "kara_delik" or not hedefler:
+        print(f"Oyunu {hamle} hamlede bitirdin!")
 
 
 if __name__ == "__main__":
